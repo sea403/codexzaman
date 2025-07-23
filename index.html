@@ -3,76 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neumorphism Calculator</title>
-    <!-- Bootstrap optional -->
+
+    <title>Scientific Calculator</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" integrity="sha384-ENjdO4Dr2bkBIFxQpeoA6UwLJ9KE/HGuCsK/xW++eZ8vgvGZ4q0paoXx3Q3lsNqK" crossorigin="anonymous">
     <style>
         :root {
-            --bg: #e0e0e0;
-            --shadow-dark: #bebebe;
-            --shadow-light: #ffffff;
-            --text: #000;
+            --bg: #e6e6e6;
+            --display-bg: #f4f4f4;
+            --key-bg: #e0e0e0;
+            --key-shadow: rgba(0,0,0,0.2);
+            --text: #333;
         }
         .dark-theme {
-            --bg: #2e2e2e;
-            --shadow-dark: #1c1c1c;
-            --shadow-light: #3a3a3a;
-            --text: #fff;
+            --bg: #222;
+            --display-bg: #333;
+            --key-bg: #444;
+            --key-shadow: rgba(0,0,0,0.7);
+            --text: #f4f4f4;
         }
         body {
             background: var(--bg);
-            color: var(--text);
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
+            color: var(--text);
         }
         .calculator {
             background: var(--bg);
             padding: 20px;
-            border-radius: 20px;
-            box-shadow: 9px 9px 16px var(--shadow-dark),
-                        -9px -9px 16px var(--shadow-light);
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            width: 420px;
+
         }
         .display {
             width: 100%;
             height: 60px;
+            margin-bottom: 15px;
             border: none;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: inset 5px 5px 10px var(--shadow-dark),
-                        inset -5px -5px 10px var(--shadow-light);
-            padding: 10px;
-            font-size: 24px;
+            border-radius: 8px;
             text-align: right;
-            background: var(--bg);
+            padding: 10px;
+            font-size: 28px;
             color: var(--text);
+            background: var(--display-bg);
+            box-shadow: inset 0 2px 4px var(--key-shadow);
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
         }
         .btn-calc {
-            width: 60px;
             height: 60px;
-            margin: 5px;
-            border-radius: 10px;
+            font-size: 18px;
             border: none;
-            box-shadow: 5px 5px 10px var(--shadow-dark),
-                        -5px -5px 10px var(--shadow-light);
-            background: var(--bg);
-            font-size: 20px;
+            border-radius: 8px;
+            background: var(--key-bg);
             color: var(--text);
+            box-shadow: 0 4px 6px var(--key-shadow);
         }
         .btn-calc:active {
-            box-shadow: inset 5px 5px 10px var(--shadow-dark),
-                        inset -5px -5px 10px var(--shadow-light);
+            box-shadow: inset 0 2px 4px var(--key-shadow);
+        }
+        #themeSwitch {
+            width: 100%;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
     <div class="calculator">
-        <button id="themeSwitch" class="btn btn-secondary mb-3" onclick="toggleTheme()">Toggle Theme</button>
-        <input type="text" id="display" class="display" disabled>
-        <div class="d-flex flex-wrap">
+        <button id="themeSwitch" class="btn btn-secondary" onclick="toggleTheme()">Dark Mode</button>
+        <input type="text" id="display" class="display" readonly>
+        <div class="buttons">
+            <button class="btn-calc" onclick="appendFunc('Math.sin')">sin</button>
+            <button class="btn-calc" onclick="appendFunc('Math.cos')">cos</button>
+            <button class="btn-calc" onclick="appendFunc('Math.tan')">tan</button>
+            <button class="btn-calc" onclick="appendFunc('Math.log10')">log</button>
+
+            <button class="btn-calc" onclick="appendFunc('Math.log')">ln</button>
+            <button class="btn-calc" onclick="append('Math.PI')">π</button>
+            <button class="btn-calc" onclick="append('Math.E')">e</button>
+            <button class="btn-calc" onclick="appendFunc('Math.sqrt')">√</button>
+
+            <button class="btn-calc" onclick="clearDisplay()">C</button>
+            <button class="btn-calc" onclick="append('(')">(</button>
+            <button class="btn-calc" onclick="append(')')">)</button>
+            <button class="btn-calc" onclick="append('**')">^</button>
             <button class="btn-calc" onclick="append('7')">7</button>
             <button class="btn-calc" onclick="append('8')">8</button>
             <button class="btn-calc" onclick="append('9')">9</button>
@@ -86,51 +108,55 @@
             <button class="btn-calc" onclick="append('3')">3</button>
             <button class="btn-calc" onclick="append('-')">-</button>
             <button class="btn-calc" onclick="append('0')">0</button>
-            <button class="btn-calc" onclick="clearDisplay()">C</button>
+            <button class="btn-calc" onclick="append('.')">.</button>
             <button class="btn-calc" onclick="calculate()">=</button>
             <button class="btn-calc" onclick="append('+')">+</button>
         </div>
     </div>
 
-<script>
-    const display = document.getElementById('display');
-    const themeSwitch = document.getElementById('themeSwitch');
+    <script>
+        const display = document.getElementById('display');
+        const themeSwitch = document.getElementById('themeSwitch');
 
-    function applyTheme() {
-        const theme = localStorage.getItem('theme');
-        if (theme === 'dark') {
-            document.body.classList.add('dark-theme');
-            themeSwitch.textContent = 'Light Mode';
-        } else {
-            document.body.classList.remove('dark-theme');
-            themeSwitch.textContent = 'Dark Mode';
+        function applyTheme() {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark') {
+                document.body.classList.add('dark-theme');
+                themeSwitch.textContent = 'Light Mode';
+            } else {
+                document.body.classList.remove('dark-theme');
+                themeSwitch.textContent = 'Dark Mode';
+            }
         }
-    }
 
-    function toggleTheme() {
-        const current = localStorage.getItem('theme');
-        const newTheme = current === 'dark' ? 'light' : 'dark';
-        localStorage.setItem('theme', newTheme);
+        function toggleTheme() {
+            const current = localStorage.getItem('theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            applyTheme();
+        }
+
         applyTheme();
-    }
 
-    applyTheme();
-
-    function append(value) {
-        display.value += value;
-    }
-
-    function clearDisplay() {
-        display.value = '';
-    }
-
-    function calculate() {
-        try {
-            display.value = eval(display.value);
-        } catch (e) {
-            display.value = 'Error';
+        function append(value) {
+            display.value += value;
         }
-    }
-</script>
+
+        function appendFunc(func) {
+            display.value += func + '(';
+        }
+
+        function clearDisplay() {
+            display.value = '';
+        }
+
+        function calculate() {
+            try {
+                display.value = eval(display.value);
+            } catch (e) {
+                display.value = 'Error';
+            }
+        }
+    </script>
 </body>
 </html>
