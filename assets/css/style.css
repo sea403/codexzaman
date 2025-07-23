@@ -1,0 +1,69 @@
+:root {
+    --bg: #e6e6e6;
+    --display-bg: #f4f4f4;
+    --key-bg: #e0e0e0;
+    --key-shadow: rgba(0,0,0,0.2);
+    --text: #333;
+}
+.dark-theme {
+    --bg: #222;
+    --display-bg: #333;
+    --key-bg: #444;
+    --key-shadow: rgba(0,0,0,0.7);
+    --text: #f4f4f4;
+}
+body {
+    background: var(--bg);
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    color: var(--text);
+}
+.calculator {
+    background: var(--bg);
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    width: 420px;
+}
+.display {
+    width: 100%;
+    height: 60px;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 8px;
+    text-align: right;
+    padding: 10px;
+    font-size: 28px;
+    color: var(--text);
+    background: var(--display-bg);
+    box-shadow: inset 0 2px 4px var(--key-shadow);
+}
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+.btn-calc {
+    height: 60px;
+    font-size: 18px;
+    border: none;
+    border-radius: 8px;
+    background: var(--key-bg);
+    color: var(--text);
+    box-shadow: 0 4px 6px var(--key-shadow);
+}
+.btn-calc:active {
+    box-shadow: inset 0 2px 4px var(--key-shadow);
+}
+#themeSwitch {
+    width: 100%;
+    margin-bottom: 10px;
+}
+#themeSwitch img {
+    width: 20px;
+    height: 20px;
+}
